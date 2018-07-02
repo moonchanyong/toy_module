@@ -1,0 +1,48 @@
+div#display {
+  background-color: rgba(100, 100, 255, 0.1);
+  width: 100vw;
+  padding: 0;
+  overflow-x: scroll;
+  white-space: nowrap;
+}
+
+div#control_pannel {
+  margin: 10px 10px;
+  width: 100vw;
+}
+
+div.circle-btn {
+  display: inline-block;
+  width: 50px ;
+  height: 50px;
+  border-radius: 50%;
+  border-style: dotted;
+  line-height: 50px;
+  text-align: center;
+  margin:  0 20px;
+}
+div.circle-btn:hover {
+  background-color: #99d;
+}
+div.circle-btn:active {
+  background-color: #779;
+}
+input#nameList {
+  height: 10vh;
+  width: 50vw;
+}
+.compoenetSet {
+  display: inline-block;
+  width: 20vw;
+  height: calc(50vh * 0.8);
+  margin: calc(50vh * 0.1) 20px;
+  background-color: white;
+}
+
+.close-btn {
+  opacity: 1;
+  margin: 10px;
+  width: 30px;
+  height: 30px;
+  -webkit-text-fill-color: red;
+}
