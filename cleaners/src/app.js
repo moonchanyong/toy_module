@@ -9,6 +9,9 @@ function qsAll(selector) {
   return document.querySelectorAll(selector);
 }
 
+function $on(target, type, callback, capture) {
+	target.addEventListener(type, callback, !!capture);
+}
 /**
  * A function used to create Element
  * @ko Element 생성
@@ -74,6 +77,15 @@ class componentSet extends Component {
   }
 
 }
+
+const setArr = [];
+$on(document, 'DOMContentLoaded', () => {
+  $on(qs('#plus'), 'click', () =>{
+    console.log('clicked plus', new componentSet())
+    setArr.push(new componentSet());
+    setArr[setArr.length-1].export(qs('#display'));
+  })
+})
 
 window._ = _;
 window.componentSet = componentSet;
