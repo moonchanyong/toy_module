@@ -39,6 +39,7 @@ input#nameList {
   background-color: white;
   overflow-y: scroll;
   white-space: nowrap;
+  overflow-x: hidden;
 }
 
 .close-btn {
