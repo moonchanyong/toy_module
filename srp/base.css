@@ -1,0 +1,45 @@
+#display {
+  background-color: rgba(100, 100, 100, 0.7);
+  width: 80vw;
+  height: 50vh;
+}
+
+.center {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.circle {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+.scissor {
+  background-image: url('assets/scissor.png');
+  background-size: cover;
+}
+
+.rock {
+  background-image: url('assets/rock.png');
+  background-size: cover;
+}
+
+.paper {
+  background-image: url('assets/paper.png');
+  background-size: cover;
+}
+
+.control:hover {
+  background-blend-mode: screen;
+  background-color: rgba(0, 0, 255, 1);
+}
+
+.control:active {
+  background-blend-mode: screen;
+  background-color: rgba(0, 255, 255, 1);
+}
