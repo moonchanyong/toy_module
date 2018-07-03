@@ -37,6 +37,8 @@ input#nameList {
   height: calc(50vh * 0.8);
   margin: calc(50vh * 0.1) 20px;
   background-color: white;
+  overflow-y: scroll;
+  white-space: nowrap;
 }
 
 .close-btn {
@@ -45,4 +47,9 @@ input#nameList {
   width: 30px;
   height: 30px;
   -webkit-text-fill-color: red;
+}
+
+.compoenet-input {
+  width: 100%;
+  padding:0;
 }

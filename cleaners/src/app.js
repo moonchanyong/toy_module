@@ -9,6 +9,18 @@ function qsAll(selector) {
   return document.querySelectorAll(selector);
 }
 
+function curry(fn) {
+  return (...xs) => {
+    if (xs.length === 0) {
+      throw Error('EMPTY INVOCATION');
+    }
+    if (xs.length >= fn.length) {
+      return fn(...xs);
+    }
+    return curry(fn.bind(null, ...xs));
+  };
+}
+
 function $on(target, type, callback, capture) {
 	target.addEventListener(type, callback, !!capture);
 }
@@ -54,17 +66,54 @@ function appendClass(el, ...classList) {
   return el;
 }
 
-
-
-class componentSet extends Component {
+class ComponentSet extends Component {
   constructor() {
     super();
+    this.nameList = [];
     this.el = createEl('div');
     this.el.classList.add('compoenetSet');
+
+    // append div
+    // _.go(
+    //   appendClass(createEl('div'), 'close-btn'),
+    //   this.el.appendChild.bind(this.el),
+    // ).innerText = 'x';
+
     _.go(
-      appendClass(createEl('div'), 'close-btn'),
+      appendClass(createEl('input'), 'compoenet-input'),
       this.el.appendChild.bind(this.el),
-    ).innerText = 'x';
+    );
+    this.el.addEventListener('keyup', (e)=> {
+      e.preventDefault();
+      if (e.keyCode === 13 && !!(e.target.value)) {
+        // Trigger the button element with a click
+        this.push(e.target.value);
+        e.target.value = "";
+      }
+    });
+  } // end constructor
+
+  getLength() {
+    return this.nameList.length;
+  }
+
+  find_delete(val) {
+    _.go(
+      this.nameList,
+      _.findIndex((i) => i===val),
+      curry(_.removeByIndex)(this.nameList)
+    )
+  }
+
+  push(data) {
+    this.nameList.push(data);
+    let nameTag = document.createElement('div', 'nameTag')
+    nameTag.addEventListener('click', (e) => {
+      this.find_delete(e.target.innerText);
+      e.target.remove();
+    });
+    nameTag.innerText=data;
+    this.el.appendChild(nameTag);
   }
 
   /**
@@ -75,17 +124,46 @@ class componentSet extends Component {
   export(target) {
     target.append(this.el);
   }
-
 }
 
 const setArr = [];
 $on(document, 'DOMContentLoaded', () => {
   $on(qs('#plus'), 'click', () =>{
-    console.log('clicked plus', new componentSet())
-    setArr.push(new componentSet());
+    setArr.push(new ComponentSet());
     setArr[setArr.length-1].export(qs('#display'));
-  })
-})
+  });
+  $on(qs('#equal'), 'click', (e) => {
+    result();
+    qs('#control_pannel').style['display'] = 'none';
+    e.target.value=""
+  });
+});
+
+function result() {
+  let strData = _.compact(qs('#nameList').value.replace(' ', '').split(','));
+
+  console.log(strData.length);
+  let fixedMemberNum = _.reduce(setArr, (a, b) => a+b.getLength(), 0);
+  console.log(fixedMemberNum);
+  let limitH = Math.ceil((strData.length+fixedMemberNum) / setArr.length);
+  console.log(limitH);
+  // 전처리
+  _.filter(setArr, (item) => item.getLength() < limitH);
+  _.go(
+    strData,
+    _.hi,
+    _.each((item) => {
+      let idx = _.random(0, setArr.length-1);
+      setArr[idx].push(item);
+      if(setArr[idx].getLength() >= limitH) _.removeByIndex(setArr, idx);
+    })
+  )
+  _.go(
+    setArr,
+    _.filter((item) => item.getLength() === 0),
+    _.each((item)=> {item.el.remove();})
+  )
+}
 
 window._ = _;
-window.componentSet = componentSet;
+window.ComponentSet = ComponentSet;
