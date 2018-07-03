@@ -36,8 +36,8 @@ function result() {
   console.log(fixedMemberNum);
   let limitH = Math.ceil((strData.length+fixedMemberNum) / setArr.length);
   console.log(limitH);
-  // 전처리
-  _.filter(setArr, (item) => item.getLength() < limitH);
+  // 전처리, immutable 위반
+  setArr = _.filter(setArr, (item) => item.getLength() < limitH);
   _.go(
     strData,
     _.hi,
