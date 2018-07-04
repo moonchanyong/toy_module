@@ -35,17 +35,17 @@ div.display {
 }
 
 .scissor {
-  background-image: url('assets/scissor.png');
+  background-image: url('../assets/scissor.png');
   background-size: cover;
 }
 
 .rock {
-  background-image: url('assets/rock.png');
+  background-image: url('../assets/rock.png');
   background-size: cover;
 }
 
 .paper {
-  background-image: url('assets/paper.png');
+  background-image: url('../assets/paper.png');
   background-size: cover;
 }
 
