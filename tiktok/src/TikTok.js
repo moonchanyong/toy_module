@@ -4,7 +4,7 @@ class TikTok {
     this.on = document.addEventListener.bind(document);
     this.qs = document.querySelector.bind(document);
     this.handler = {};
-
+    // TODO: reveal only public api
   }
   enter(val){
     let recl = this.enter.bind(this);
