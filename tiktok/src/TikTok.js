@@ -1,12 +1,22 @@
 class TikTok {
 
   constructor() {
-    this.on = document.addEventListener.bind(document);
     this.qs = document.querySelector.bind(document);
     this.handler = {};
     // TODO: reveal only public api
+    
   }
-  enter(val){
+
+  on(el, type, f) {
+    document.addEventListener.call(document,
+      type,
+      (e) => {
+        if(el === e.target) f(e);
+      }
+    );
+  }
+
+  enter(val) {
     let recl = this.enter.bind(this);
     return {
       do(f) {
@@ -33,7 +43,7 @@ class TikTok {
   }
 
   /**
-  *
+  * @ko dom찾아서 이벤트 핸들러 등록
   * @param {String} el it's selector of document
   * @param {String} type eventType
   * @param {String} keyword call handler type
@@ -45,16 +55,18 @@ class TikTok {
     this.checkType(keyword, 'string', 'it is invalid selector or element');
 
     // TODO: document로 바꿔야 함
-    // this.on(el, type, this.trigger(keyword));
-
-    el.addEventListener(type, this.trigger(keyword));
+    this.on(el, type, this.trigger(keyword));
   }
 
+  /**
+  * @ko 키워드따라 실행 할 이벤트 등록
+  * @param {String} keyword call handler type
+  * @param {Function} handler event Handelr
+  */
   subscribe(keyword, handler) {
     this.handler[keyword] = this.handler[keyword] || [];
     this.handler[keyword].push(handler);
   }
-  // curry 적용 .. subscribe(function, f, f)(f)(f)(f) pipe로 하도록
 }
 
 
