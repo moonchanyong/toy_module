@@ -1,19 +1,27 @@
 class TikTok {
-
   constructor() {
     this.qs = document.querySelector.bind(document);
     this.handler = {};
+    this.listener = {};
     // TODO: reveal only public api
-    
   }
 
   on(el, type, f) {
-    document.addEventListener.call(document,
-      type,
-      (e) => {
-        if(el === e.target) f(e);
-      }
-    );
+    // TODO: el.outerHTML은 같은 속성에 같은 이름을 가진 태그라면 똑같이 실행된다. 고유 아이디값이 돔에 매핑되야 해결이된다.
+    if(!this.listener[type]) {
+      this.listener[type] = {};
+      document.addEventListener.call(document,
+        type,
+        (e) => {
+          if(!!this.listener[type][e.target.outerHTML])
+          this.listener[type][e.target.outerHTML].forEach((func)=>{func(e)});
+        }
+      );
+    }
+
+    this.listener[type] = this.listener[type] || {};
+    this.listener[type][el.outerHTML] = this.listener[type][el] || [];
+    this.listener[type][el.outerHTML].push(f);
   }
 
   enter(val) {
@@ -22,7 +30,10 @@ class TikTok {
       do(f) {
         return recl(f(val));
       },
-      getValue() { return val; }
+      getValue() { return val; },
+      hi() {
+        return recl(val);
+      }
     }
   }
 
@@ -37,7 +48,8 @@ class TikTok {
 
   trigger(keyword) {
     return (e) => {
-      this.checkType(this.handler[keyword], 'array', 'error, report to writer')
+      this.checkType.call(this, this.handler[keyword], 'array', 'error, report to writer')
+      .hi()
       .getValue().forEach((f)=>{f(e)});
     }
   }
@@ -64,6 +76,7 @@ class TikTok {
   * @param {Function} handler event Handelr
   */
   subscribe(keyword, handler) {
+
     this.handler[keyword] = this.handler[keyword] || [];
     this.handler[keyword].push(handler);
   }
