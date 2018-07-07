@@ -4,10 +4,14 @@ class TikTok {
     this.handler = {};
     this.listener = {};
     // TODO: reveal only public api
+    let ret = {};
+    ret.next = this.next.bind(this);
+    ret.subscribe = this.subscribe.bind(this);
+    return ret;
   }
 
   on(el, type, f) {
-    // TODO: el.outerHTML은 같은 속성에 같은 이름을 가진 태그라면 똑같이 실행된다. 고유 아이디값이 돔에 매핑되야 해결이된다.
+    // TODO: el.outerHTML은 같은 속성에 같은 이름을 가진 태그라면 똑같이 실행된다. 고유 아이디값이 돔에 매핑되야 해결이된다. => (Symbol사용)
     if(!this.listener[type]) {
       this.listener[type] = {};
       document.addEventListener.call(document,
