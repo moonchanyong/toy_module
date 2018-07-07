@@ -3,11 +3,13 @@ class TikTok {
     this.qs = document.querySelector.bind(document);
     this.handler = {};
     this.listener = {};
-    // TODO: reveal only public api
+
+    // revealing only public API
     let ret = {};
     ret.next = this.next.bind(this);
     ret.subscribe = this.subscribe.bind(this);
-    ret.readHander = this.readHander.bind(this);
+    ret.hasHandler = this.hasHandler.bind(this);
+    ret.handler = this.handler;
     return ret;
   }
 
@@ -90,23 +92,22 @@ class TikTok {
   * @param {String} keyword call handler type
   * @param {Function} handler event Handelr
   */
-  subscribe(keyword, ...handler) {
+  subscribe(keyword, handler) {
     this.checkType(keyword, 'string', 'it is invalid keyword');
-    let func = this.pipe(...handler);
+    // TODO: 파이프라인 지원 할 것인지 생각해봐야한다.
+    // let func = this.pipe(...handler);
     this.handler[keyword] = this.handler[keyword] || [];
-    this.handler[keyword].push(func);
+    this.handler[keyword].push(handler);
   }
 
-  readHander() {
-    let ret = {}
-    Object.assign(ret, this.handler);
-    Object.freeze(ret);
-    for(let o in ret ) Object.freeze(o);
-    return ret;
+  hasHandler(keyword, f) {
+    if(!this.handler[keyword]) return false;
+    for(let idx = 0; idx < this.handler[keyword].length; idx++)
+      if(this.handler[keyword][idx] === f) return true;
+    return false;
   }
 
-  readListener() {
-
+  hasListener() {
   }
 }
 
