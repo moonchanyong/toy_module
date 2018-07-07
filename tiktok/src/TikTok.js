@@ -61,7 +61,9 @@ class TikTok {
   * @param {String} keyword call handler type
   */
   next(selector, type, keyword) {
-    let el = this.checkType(selector, 'string', 'selector is not string').do(this.qs).getValue();
+    let el = this.checkType(selector, 'string', 'selector is not string')
+    .do(this.qs)
+    .getValue();
     this.checkType(el, 'object', 'it is invalid selector or element');
     this.checkType(type, 'string', 'type is invalid');
     this.checkType(keyword, 'string', 'it is invalid selector or element');
@@ -82,5 +84,4 @@ class TikTok {
   }
 }
 
-
-export defaults TikTok;
+module.exports = new TikTok();
