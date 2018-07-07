@@ -63,11 +63,13 @@ class TikTok {
 
   /**
   * @ko dom찾아서 이벤트 핸들러 등록
+  * @param {String} uri
   * @param {String} el it's selector of document
   * @param {String} type eventType
   * @param {String} keyword call handler type
   */
-  next(selector, type, keyword) {
+  next(uri) {
+    let [selector, type, keyword] = uri.split('/').map((i) => i.trim());
     let el = this.checkType(selector, 'string', 'selector is not string')
     .do(this.qs)
     .getValue();
