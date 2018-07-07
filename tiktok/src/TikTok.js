@@ -20,15 +20,15 @@ class TikTok {
       document.addEventListener.call(document,
         type,
         (e) => {
-          if(!!this.listener[type][e.target.outerHTML])
-          this.listener[type][e.target.outerHTML].forEach((func)=>{func(e)});
+          if(!!this.listener[type][e.target._uniqSymbol])
+          this.listener[type][e.target._uniqSymbol].forEach((func)=>{func(e)});
         }
       );
     }
-
+    if(!el._uniqSymbol) el._uniqSymbol = Symbol('uniq');
     this.listener[type] = this.listener[type] || {};
-    this.listener[type][el.outerHTML] = this.listener[type][el] || [];
-    this.listener[type][el.outerHTML].push(f);
+    this.listener[type][el._uniqSymbol] = this.listener[type][el] || [];
+    this.listener[type][el._uniqSymbol].push(f);
   }
 
   enter(val) {
@@ -55,9 +55,8 @@ class TikTok {
 
   trigger(keyword) {
     return (e) => {
-      this.checkType.call(this, this.handler[keyword], 'array', 'error, report to writer')
-      .hi()
-      .getValue().forEach((f)=>{f(e)});
+      if(!this.handler[keyword]) return;
+      this.handler[keyword].forEach((f)=>{f(e)});
     }
   }
 
