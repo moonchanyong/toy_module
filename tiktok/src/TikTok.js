@@ -7,6 +7,7 @@ class TikTok {
     let ret = {};
     ret.next = this.next.bind(this);
     ret.subscribe = this.subscribe.bind(this);
+    ret.readHander = this.readHander.bind(this);
     return ret;
   }
 
@@ -68,12 +69,20 @@ class TikTok {
     let el = this.checkType(selector, 'string', 'selector is not string')
     .do(this.qs)
     .getValue();
-    this.checkType(el, 'object', 'it is invalid selector or element');
+    this.checkType(el, 'object', 'it is invalid selector');
     this.checkType(type, 'string', 'type is invalid');
-    this.checkType(keyword, 'string', 'it is invalid selector or element');
+    this.checkType(keyword, 'string', 'it is invalid keyword');
 
     // TODO: document로 바꿔야 함
     this.on(el, type, this.trigger(keyword));
+  }
+
+  pipe(...fs) {
+    if(fs.length === 0 ) return (arg) => arg;
+    return (...arg) => {
+      let f = fs.shift();
+      return pipe(...fs)(f(...arg));
+    }
   }
 
   /**
@@ -81,10 +90,23 @@ class TikTok {
   * @param {String} keyword call handler type
   * @param {Function} handler event Handelr
   */
-  subscribe(keyword, handler) {
-
+  subscribe(keyword, ...handler) {
+    this.checkType(keyword, 'string', 'it is invalid keyword');
+    let func = this.pipe(...handler);
     this.handler[keyword] = this.handler[keyword] || [];
-    this.handler[keyword].push(handler);
+    this.handler[keyword].push(func);
+  }
+
+  readHander() {
+    let ret = {}
+    Object.assign(ret, this.handler);
+    Object.freeze(ret);
+    for(let o in ret ) Object.freeze(o);
+    return ret;
+  }
+
+  readListener() {
+
   }
 }
 
