@@ -10,25 +10,27 @@ class TikTok {
     ret.subscribe = this.subscribe.bind(this);
     ret.hasHandler = this.hasHandler.bind(this);
     ret.handler = this.handler;
+    ret.hasListener = this.hasListener.bind(this);
     return ret;
   }
 
-  on(el, type, f) {
-    // TODO: el.outerHTML은 같은 속성에 같은 이름을 가진 태그라면 똑같이 실행된다. 고유 아이디값이 돔에 매핑되야 해결이된다. => (Symbol사용)
+  // @TODO: keyword를 리스너에 저장하고 그 키워드로 핸드러를 실행하도록 하는 키워드 중심의 데이터 구조로 바꿔아한다.
+  on(el, type, keyword) {
     if(!this.listener[type]) {
       this.listener[type] = {};
       document.addEventListener.call(document,
         type,
         (e) => {
           if(!!this.listener[type][e.target._uniqSymbol])
-          this.listener[type][e.target._uniqSymbol].forEach((func)=>{func(e)});
+          Object.keys(this.listener[type][e.target._uniqSymbol])
+          .forEach((_keyword) => { this.handler[_keyword].forEach(func => func(e)) });
         }
       );
     }
     if(!el._uniqSymbol) el._uniqSymbol = Symbol('uniq');
     this.listener[type] = this.listener[type] || {};
-    this.listener[type][el._uniqSymbol] = this.listener[type][el] || [];
-    this.listener[type][el._uniqSymbol].push(f);
+    this.listener[type][el._uniqSymbol] = this.listener[type][el._uniqSymbol] || {};
+    this.listener[type][el._uniqSymbol][keyword] = keyword;
   }
 
   enter(val) {
@@ -53,13 +55,6 @@ class TikTok {
     return this.enter(val);
   }
 
-  trigger(keyword) {
-    return (e) => {
-      if(!this.handler[keyword]) return;
-      this.handler[keyword].forEach((f)=>{f(e)});
-    }
-  }
-
   /**
   * @ko dom찾아서 이벤트 핸들러 등록
   * @param {String} uri
@@ -77,7 +72,7 @@ class TikTok {
     this.checkType(keyword, 'string', 'it is invalid keyword');
 
     // TODO: document로 바꿔야 함
-    this.on(el, type, this.trigger(keyword));
+    this.on(el, type, keyword);
   }
 
   pipe(...fs) {
@@ -108,7 +103,20 @@ class TikTok {
     return false;
   }
 
-  hasListener() {
+  /**
+  * @TODO: @ko 이거 키워드로확인해야하는데 키워드로 확인하는 구분이 없음
+  * @ko element에 특정 이벤트에 키워드가 등록되어 있는지 확인해야한다.
+  */
+  hasListener(uri) {
+    let [selector, type, keyword] = uri.split('/').map((item) => item.trim());
+    let el = this.checkType(selector, 'string', 'selector is not string')
+    .do(this.qs)
+    .getValue();
+    this.checkType(el, 'object', 'it is invalid selector');
+    this.checkType(type, 'string', 'type is invalid');
+    this.checkType(keyword, 'string', 'type is invalid');
+
+    return !!this.listener[type][el._uniqSymbol][keyword]
   }
 }
 
