@@ -1,4 +1,11 @@
 class TikTok {
+  /**
+  * Create: next, subscribe
+  * Read: hasHandler, hasListener
+  * Update: replaceHandler, replaceListener
+  * Delete:
+  */
+
   constructor() {
     this.qs = document.querySelector.bind(document);
     this.handler = {};
@@ -6,12 +13,30 @@ class TikTok {
 
     // revealing only public API
     let ret = {};
+    // create
     ret.next = this.next.bind(this);
     ret.subscribe = this.subscribe.bind(this);
+    // read
     ret.hasHandler = this.hasHandler.bind(this);
-    ret.handler = this.handler;
     ret.hasListener = this.hasListener.bind(this);
+    // update
+    ret.replaceListener = this.replaceListener.bind(this);
+    ret.replaceHandler = this.replaceHandler.bind(this);
+    // delete
+    ret.deleteListener = this.deleteListener.bind(this);
+    ret.deleteHandler = this.deleteHandler.bind(this);
     return ret;
+  }
+
+  preProcessing(uri) {
+    let [selector, type, keyword] = uri.split('/').map((item) => item.trim());
+    let el = this.checkType(selector, 'string', 'selector is not string')
+    .do(this.qs)
+    .getValue();
+    this.checkType(el, 'object', 'it is invalid selector');
+    this.checkType(type, 'string', 'type is invalid');
+    this.checkType(keyword, 'string', 'it is invalid keyword');
+    return [el, type, keyword];
   }
 
   // @TODO: keyword를 리스너에 저장하고 그 키워드로 핸드러를 실행하도록 하는 키워드 중심의 데이터 구조로 바꿔아한다.
@@ -21,9 +46,12 @@ class TikTok {
       document.addEventListener.call(document,
         type,
         (e) => {
-          if(!!this.listener[type][e.target._uniqSymbol])
-          Object.keys(this.listener[type][e.target._uniqSymbol])
-          .forEach((_keyword) => { this.handler[_keyword].forEach(func => func(e)) });
+          if(!!this.listener[type][e.target._uniqSymbol]) {
+            Object.keys(this.listener[type][e.target._uniqSymbol])
+            .forEach((_keyword) => {
+              if(!!this.handler[_keyword]) this.handler[_keyword].forEach(func => func(e));
+            });
+          }
         }
       );
     }
@@ -46,6 +74,12 @@ class TikTok {
     }
   }
 
+
+
+  rm(arr, idx) {
+    return arr.splice(idx, 1).length > 0;
+  }
+
   checkType(val, type, msg) {
     type = type.toLowerCase();
     let pass = false;
@@ -63,15 +97,7 @@ class TikTok {
   * @param {String} keyword call handler type
   */
   next(uri) {
-    let [selector, type, keyword] = uri.split('/').map((i) => i.trim());
-    let el = this.checkType(selector, 'string', 'selector is not string')
-    .do(this.qs)
-    .getValue();
-    this.checkType(el, 'object', 'it is invalid selector');
-    this.checkType(type, 'string', 'type is invalid');
-    this.checkType(keyword, 'string', 'it is invalid keyword');
-
-    // TODO: document로 바꿔야 함
+    let [el, type, keyword] = this.preProcessing(uri);
     this.on(el, type, keyword);
   }
 
@@ -104,19 +130,59 @@ class TikTok {
   }
 
   /**
-  * @TODO: @ko 이거 키워드로확인해야하는데 키워드로 확인하는 구분이 없음
-  * @ko element에 특정 이벤트에 키워드가 등록되어 있는지 확인해야한다.
+  * @ko element에 특정 이벤트에 키워드가 등록되어 있는지 확인한다
+  * @param {String} uri
+  * @param {String} el it's selector of document
+  * @param {String} type eventType
+  * @param {String} keyword call handler type
+  * @return {Boolean} @ko 가지고 있으면 리턴
   */
   hasListener(uri) {
-    let [selector, type, keyword] = uri.split('/').map((item) => item.trim());
-    let el = this.checkType(selector, 'string', 'selector is not string')
-    .do(this.qs)
-    .getValue();
-    this.checkType(el, 'object', 'it is invalid selector');
-    this.checkType(type, 'string', 'type is invalid');
-    this.checkType(keyword, 'string', 'type is invalid');
-
+    let [el, type, keyword] = this.preProcessing(uri);
     return !!this.listener[type][el._uniqSymbol][keyword]
+  }
+
+  /**
+  * @ko 등록된 keyword의 핸들러를 다른 핸들러로 교체한다.
+  * @param {String} keyword handler category
+  * @param {String} dst @ko 원래 있는 핸들러
+  * @param {String} src @ko 바꿀 핸들러
+  * @return {Boolean} @ko 가지고 있으면 리턴
+  */
+  replaceHandler() {
+
+  }
+
+  replaceListener() {
+
+  }
+
+  /**
+  * @ko 등록된 keyword의 핸들러를 제거한다
+  * @param {String} keyword handler category
+  * @param {String} dst 원래 있는 핸들러
+  * @return {Boolean} is deleted
+  */
+  deleteHandler(keyword, dst) {
+    this.checkType(keyword, 'string', 'type is invalid');
+    this.checkType(this.handler[keyword], 'array', 'handler is added no one');
+    let idx = this.handler[keyword].findIndex((f) => dst===f);
+    if(idx === -1) throw Error('there is no the function');
+    return this.rm(this.handler[keyword], idx);
+  }
+
+  /**
+  * @ko 등록된 keyword의 핸들러를 제거한다
+  * @param {String} el target element
+  * @param {String} type target type
+  * @param {String} keyword target keyword
+  * @return {Boolean} is deleted
+  * FIXME: 리스너는 안지우고 남아있다.
+  */
+  deleteListener(uri) {
+    let [el, type, keyword] = this.preProcessing(uri);
+    let ret = (delete this.listener[type][el._uniqSymbol][keyword]);
+    return ret;
   }
 }
 
