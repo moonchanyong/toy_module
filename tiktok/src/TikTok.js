@@ -74,8 +74,6 @@ class TikTok {
     }
   }
 
-
-
   rm(arr, idx) {
     return arr.splice(idx, 1).length > 0;
   }
@@ -149,19 +147,35 @@ class TikTok {
   * @param {String} src @ko 바꿀 핸들러
   * @return {Boolean} @ko 가지고 있으면 리턴
   */
-  replaceHandler() {
-
+  replaceHandler(keyword, dst, src) {
+    const idx = this.handler[keyword].find(dst)-1;
+    if(!idx) return false;
+    this.handler[keyword][idx] = src;
+    return true;
   }
 
-  replaceListener() {
+  /**
+  * @ko 등록된 트리거 키워드를 교체한다.
+  * @param {String} el target element
+  * @param {String} type target type
+  * @param {String} keyword target keyword
+  * @return {Boolean} is deleted
+  */
+  replaceListener(uri, newKeyword) {
+    let [el, type, keyword] = this.preProcessing(uri);
+    if(!this.listener[type][el._uniqSymbol][newKeyword]) throw new Error('it has been keyword')
+    this.listener[type][el._uniqSymbol][newKeyword] = this.listener[type][el._uniqSymbol][keyword];
+    return (delete this.listener[type][el._uniqSymbol][keyword]);
 
   }
 
   /**
   * @ko 등록된 keyword의 핸들러를 제거한다
-  * @param {String} keyword handler category
-  * @param {String} dst 원래 있는 핸들러
+  * @param {String} el target element
+  * @param {String} type target type
+  * @param {String} keyword target keyword
   * @return {Boolean} is deleted
+  * FIXME: 리스너는 안지우고 남아있다.
   */
   deleteHandler(keyword, dst) {
     this.checkType(keyword, 'string', 'type is invalid');
@@ -172,7 +186,7 @@ class TikTok {
   }
 
   /**
-  * @ko 등록된 keyword의 핸들러를 제거한다
+  * @ko 등록된 keyword의 리스너를 제거한다
   * @param {String} el target element
   * @param {String} type target type
   * @param {String} keyword target keyword
