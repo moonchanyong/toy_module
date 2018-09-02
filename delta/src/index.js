@@ -1,22 +1,22 @@
 import { extend } from "./snippet";
 
 export default class Delta {
-    constructor(state) {
-        this._state = state;
-        this._actors = {};
+    constructor(option) {
+        this._state = option.state || {};
+        this._transitions = option.transitions || {};
         return {
             setState: this.setState.bind(this),
+            setTransition: this.setTransition.bind(this),
         }
     }
 
     setState(state) {
         this._state = extend(this._state, state);
         this._trigger(...Object.keys(state));
-        return this._state;
     }
 
-    setActor(key, actor) {
-        this._actors[key] = actor;
+    setTransition(transitions) {
+        this._transitions = extend(this._transitions, transitions);
     }
 
     _trigger(...keys) {
