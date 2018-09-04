@@ -8,7 +8,6 @@ export default class Delta {
         this._state = option.state || {};
         this._transitions = option.transitions || {};
         return {
-            _setState: this._setState.bind(this),
             setTransition: this.setTransition.bind(this),
             translate: this.translate.bind(this),
         };
