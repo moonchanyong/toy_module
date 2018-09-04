@@ -8,6 +8,7 @@ export default class Delta {
     constructor(option) {
         this._state = option.state || {};
         this._transitions = option.transitions || {};
+        this._handler = option.handler || {};
         return {
             setTransition: this.setTransition.bind(this),
             translate: this.translate.bind(this),
@@ -39,7 +40,9 @@ export default class Delta {
 
     // private
     _trigger(...keys) {
-
+        keys.forEach(key => {
+            this._handler[key](this.state[key]);
+        });
     }
 
     _setState(state) {
