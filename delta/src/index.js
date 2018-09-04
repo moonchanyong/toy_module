@@ -41,7 +41,7 @@ export default class Delta {
     // private
     _trigger(...keys) {
         keys.forEach(key => {
-            this._handler[key](this.state[key]);
+            if(this._handler[key]) this._handler[key](this.state[key]);
         });
     }
 
