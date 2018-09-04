@@ -1,6 +1,7 @@
 import {
     extend,
-    containKeys
+    containKeys,
+    cloneObj
 } from "./snippet";
 
 export default class Delta {
@@ -15,10 +16,14 @@ export default class Delta {
 
     // getter
     get state() {
-        return this._state;
+        // 상태를 마음대로 바꿀 수 없도록
+        return cloneObj(this._state);
     }
 
     // setter
+    set state(state) {
+        this._state = state;
+    }
 
     // Interface
     setTransition(transitions) {
@@ -38,7 +43,7 @@ export default class Delta {
     }
 
     _setState(state) {
-        this._state = extend(this._state, state);
+        this.state = extend(this.state, state);
         this._trigger(...Object.keys(state));
     }
 }
