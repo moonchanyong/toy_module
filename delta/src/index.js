@@ -1,4 +1,7 @@
-import { extend } from "./snippet";
+import {
+    extend,
+    containKeys
+} from "./snippet";
 
 export default class Delta {
     constructor(option) {
@@ -25,7 +28,9 @@ export default class Delta {
 
     translate(transition, payload) {
         const nextState = this._transitions[transition](this.state, payload);
-        this._setState(nextState);
+
+        // 미리 선언된 상태가 유효한 경우에만 상태 적용
+        this._setState(containKeys(this.state, nextState) ? nextState : this.state);
     }
 
     // private
