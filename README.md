@@ -1,2 +1,10 @@
 # toy_module
-module component 공부
+module component관련, 만들고싶은것 만듬
+
+
+## 현재 리스트
+
+cleaners: 잠깐 카페에서 심심해서 만든 랜덤으로 청소조짜기(기능 추가안함)
+srp: 가위바위보 모듈(반응형UI를 적용 안함)
+tiktok: 단순 커스텀 이벤트네임 트리깅&구독 모듈
+delta(진행중): 유한상태기계(밀리머신), RP를 이용한 앱 작성시 state 관리를 효율적으로 하기위한 라이브러리
