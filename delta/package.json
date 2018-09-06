@@ -8,5 +8,9 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "todomvc-app-css": "^2.1.2",
+    "todomvc-common": "^1.0.5"
+  }
 }
